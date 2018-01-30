@@ -7,5 +7,6 @@ mv .boto /home/circleci/.boto
 #cat 2600.json
 
 #gsutil ls
-
-gsutil cp -p ../build/* gs://links.rochester2600.com/
+ENDPOINT="gs://links.rochester2600.com"
+echo "Uploading to $ENDPOINT"
+gsutil cp -p ../build/* $ENDPOINT
