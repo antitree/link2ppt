@@ -33,7 +33,7 @@ jobs:
           name: install dependencies
           command: |
             pip3 install pipenv --user
-            pipenv --three install
+            pipenv --three install --skip-lock
 
       - save_cache:
           paths:
