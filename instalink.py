@@ -64,7 +64,7 @@ class Instalink:
         from the instapaper archive'''
         url = __ENDPOINT__ + "bookmarks/list"
         data = {
-            "limit": 500, ## TODO
+            "limit": 5, ## TODO 
             "folder_id": folder
         }
         r= self._request(url, data=data, auth=self._oauth())

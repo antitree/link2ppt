@@ -26,6 +26,8 @@ from html.parser import HTMLParser
 import random
 import os
 
+import categorizer
+
 try:
     import remark
 except:
@@ -106,7 +108,11 @@ def build_remarks(content, path):
     #output = output.decode("utf-8", "backslashreplace")
     cleanoutput = teh_security(output)
     f = open(path, 'w')
-    f.writelines(cleanoutput)
+    try:
+        f.writelines(cleanoutput)
+    except TypeError:
+        print(type(cleanoutput))
+        print("Couldn't print this out for some reason")
     f.close()
 
 def desperate_summarizer(content):
@@ -121,7 +127,7 @@ def desperate_summarizer(content):
     summarizer = Summarizer(stemmer)
     summarizer.stop_words = get_stop_words(LANGUAGE)
 
-    highlights = []
+    #highlights = [cs]
     for sentence in summarizer(parser.document, SENTENCES_COUNT):
         highlights.append(sentence._text)
         logging.debug(sentence)
@@ -170,7 +176,7 @@ def get_instapaper(creds, full=False):
         days = 22 * 60 * 60 * 24
         #content = list(s for s in links if s["time"] > time.time() - 1728000)  # 20 days
         content = list(s for s in links if s["time"] > time.time() - 2592000)  # 30 days
-        print("Found %s articles" % len(content))
+        logging.info("Found %s articles" % len(content))
     else:
         content = list(s for s in links)
 
@@ -178,7 +184,7 @@ def get_instapaper(creds, full=False):
         #if not line["highlights"]: ## TODO missing what do do if there are highlights
         if True:
             logging.debug("No highlights found. adding some")
-            print("line[bookmarkid]= %s" % line["bookmark_id"])
+            logging.info("line[bookmarkid]= %s" % line["bookmark_id"])
             text = ilink.gettext(line["bookmark_id"])
             #text = unicodedata.normalize('NFKD', text).encode('ascii', 'ignore')
             # this randomly choosing how to summarize. Great
@@ -194,6 +200,7 @@ def get_instapaper(creds, full=False):
                content[indx]["highlights"] = lazy_summarizer(text)
                #content[indx]["highlights"].append("SUMYBOT9000")
                #print("Used the fail over summarizer")
+        content[indx]["category"] = [x.name for x in categorizer.Categorize(text[:1000]).classify_text()]
     return content
 
 def teh_security(badness):
