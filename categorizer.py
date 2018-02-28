@@ -13,8 +13,8 @@ class Categorize:
         if isinstance(text, six.binary_type):
             text = text.decode('utf-8')
 
-            if len(text) < 50:
-                return empty()
+            if len(text) < 100:
+                return self._empty()
 
         document = types.Document(
             content=text.encode('utf-8'),
@@ -23,11 +23,11 @@ class Categorize:
         try: 
             categories = self.client.classify_text(document).categories
         except:
-            categories = empty("ERROR")
+            categories = self._empty("ERROR")
             logging.info("ERROR caused by: %s" % document)
 
         if len(categories) == 0:
-            categories = empty("NONE FOUND")
+            categories = self._empty("NONE FOUND")
 
             logging.info(u'=' * 20)
             logging.info(text)
@@ -40,7 +40,7 @@ class Categorize:
         
         return categories
 
-    def _empty(reason="WHATEVER"):
+    def _empty(self, reason="WHATEVER"):
         e = empty()
         e.name = reason
         e.confidence = "0.01"
