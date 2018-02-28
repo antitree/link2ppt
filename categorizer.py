@@ -19,7 +19,11 @@ class Categorize:
 
 	    categories = self.client.classify_text(document).categories
 	    if len(categories) == 0:
-	    	return [{"name": "GOOGLE FAILED ME"}]
+	    	class Empty: pass
+
+	    	categories = [Empty()]  ## can i even do this?
+	    	categories[0].name = "GOOGLE FAILED ME"
+
 	    	logging.info(u'=' * 20)
 	    	logging.info(text)
 
