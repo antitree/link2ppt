@@ -7,8 +7,6 @@ import logging
 class Categorize:
 	def __init__(self):
 		print("Yep")
-		self.content = content
-
 
 	def classify_text(self, text):
 	    """Classifies content categories of the provided text."""
