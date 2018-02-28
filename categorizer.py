@@ -6,12 +6,10 @@ import logging
 
 class Categorize:
 	def __init__(self):
-		print("Yep")
+		"""Classifies content categories of the provided text."""
+	    self.client = language.LanguageServiceClient()
 
 	def classify_text(self, text):
-	    """Classifies content categories of the provided text."""
-	    client = language.LanguageServiceClient()
-
 	    if isinstance(text, six.binary_type):
 	        text = text.decode('utf-8')
 
@@ -19,7 +17,7 @@ class Categorize:
 	        content=text.encode('utf-8'),
 	        type=enums.Document.Type.PLAIN_TEXT)
 
-	    categories = client.classify_text(document).categories
+	    categories = self.client.classify_text(document).categories
 
 	    for category in categories:
 	        logging.info(u'=' * 20)
