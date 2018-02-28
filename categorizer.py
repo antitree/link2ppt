@@ -23,6 +23,7 @@ class Categorize:
 
 	    	categories = [Empty()]  ## can i even do this?
 	    	categories[0].name = "GOOGLE FAILED ME"
+	    	categories[0].confidence = "0.99"
 
 	    	logging.info(u'=' * 20)
 	    	logging.info(text)
