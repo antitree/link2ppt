@@ -10,7 +10,6 @@ class Categorize:
 
 	def classify_text(self, text):
 	    """Classifies content categories of the provided text."""
-	    text = self.content
 	    client = language.LanguageServiceClient()
 
 	    if isinstance(text, six.binary_type):
