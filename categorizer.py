@@ -18,9 +18,15 @@ class Categorize:
 	        type=enums.Document.Type.PLAIN_TEXT)
 
 	    categories = self.client.classify_text(document).categories
+	    if len(categories) == 0:
+	    	return ["GOOGLE FAILED"]
+	    	logging.info(u'=' * 20)
+	    	logging.info(text)
+
 
 	    for category in categories:
 	        logging.info(u'=' * 20)
 	        logging.info(u'{:<16}: {}'.format('name', category.name))
 	        logging.info(u'{:<16}: {}'.format('confidence', category.confidence))
+	    
 	    return categories
