@@ -14,20 +14,20 @@ class Categorize:
             text = text.decode('utf-8')
 
             if len(text) < 50:
-                categories = [Empty()]
-                catgories[0].name = "WHATEVER"
-                categoies[0].confidence = "0.01"
-                return categories
+                return empty()
 
         document = types.Document(
             content=text.encode('utf-8'),
             type=enums.Document.Type.PLAIN_TEXT)
 
-        categories = self.client.classify_text(document).categories
+        try: 
+            categories = self.client.classify_text(document).categories
+        except:
+            categories = empty("ERROR")
+            logging.info("ERROR caused by: %s" % document)
+
         if len(categories) == 0:
-            categories = [Empty()]  ## can i even do this?
-            categories[0].name = "GOOGLE FAILED ME"
-            categories[0].confidence = "0.99"
+            categories = empty("NONE FOUND")
 
             logging.info(u'=' * 20)
             logging.info(text)
@@ -39,6 +39,12 @@ class Categorize:
             logging.info(u'{:<16}: {}'.format('confidence', category.confidence))
         
         return categories
+
+    def _empty(reason="WHATEVER"):
+        e = empty()
+        e.name = reason
+        e.confidence = "0.01"
+        return [e]
 
 class Empty:
     def __init__(self):
