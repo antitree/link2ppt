@@ -7,7 +7,7 @@ import logging
 class Categorize:
 	def __init__(self):
 		"""Classifies content categories of the provided text."""
-	    self.client = language.LanguageServiceClient()
+		self.client = language.LanguageServiceClient()
 
 	def classify_text(self, text):
 	    if isinstance(text, six.binary_type):
