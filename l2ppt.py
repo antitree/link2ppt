@@ -40,6 +40,7 @@ except:
 #import urllib2
 from bs4 import BeautifulSoup
 
+logging.basicConfig(level="INFO")
 
 
 
@@ -70,7 +71,9 @@ def main():
 
     args = parser.parse_args()
 
-    if args.testmode: TESTMODE = True
+    if args.testmode: 
+        TESTMODE = True
+        logging.basicConfig(level="DEBUG")
 
     content = []
 
@@ -180,6 +183,7 @@ def get_instapaper(creds, full=False):
     else:
         content = list(s for s in links)
 
+    c = categorizer.Categorize()
     for indx, line in enumerate(content):
         #if not line["highlights"]: ## TODO missing what do do if there are highlights
         if True:
@@ -200,7 +204,7 @@ def get_instapaper(creds, full=False):
                content[indx]["highlights"] = lazy_summarizer(text)
                #content[indx]["highlights"].append("SUMYBOT9000")
                #print("Used the fail over summarizer")
-        content[indx]["category"] = [x.name for x in categorizer.Categorize(text[:1000]).classify_text()]
+        content[indx]["category"] = [x.name for x in c.classify_text(text[:1000].replace('  ',''))]
     return content
 
 def teh_security(badness):
