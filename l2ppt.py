@@ -147,7 +147,7 @@ def lazy_summarizer(content):
         print("Missing Punkt NLTK data. Downloading now...")
         nltk.download('punkt')
         tokenizer = nltk.data.load('tokenizers/punkt/english.pickle')
-    content = BeautifulSoup(content).get_text()
+    
     highlights = tokenizer.tokenize(content)[:8]
     print('-'*20)
     print(content)
@@ -189,10 +189,12 @@ def get_instapaper(creds, full=False):
         if True:
             logging.debug("No highlights found. adding some")
             logging.info("line[bookmarkid]= %s" % line["bookmark_id"])
-            text = ilink.gettext(line["bookmark_id"])
+            htmltext = ilink.gettext(line["bookmark_id"])
+            text = BeautifulSoup(content).get_text()
             #text = unicodedata.normalize('NFKD', text).encode('ascii', 'ignore')
             # this randomly choosing how to summarize. Great
-            if content[indx]["summarizer"] == "lazy" or bool(random.getrandbits(1)):
+            # yeah i took that out. IT fucked me because I forgot about it. 
+            if content[indx]["summarizer"] == "lazy":
                content[indx]["highlights"] = lazy_summarizer(text)
                #content[indx]["highlights"].append("LAZYBOT")
                #print("used the lazy summarizer")
