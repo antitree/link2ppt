@@ -190,7 +190,7 @@ def get_instapaper(creds, full=False):
             logging.debug("No highlights found. adding some")
             logging.info("line[bookmarkid]= %s" % line["bookmark_id"])
             htmltext = ilink.gettext(line["bookmark_id"])
-            text = BeautifulSoup(content).get_text()
+            text = BeautifulSoup(htmltext, "lxml").get_text()
             #text = unicodedata.normalize('NFKD', text).encode('ascii', 'ignore')
             # this randomly choosing how to summarize. Great
             # yeah i took that out. IT fucked me because I forgot about it. 
