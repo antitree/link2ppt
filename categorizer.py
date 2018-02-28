@@ -41,7 +41,7 @@ class Categorize:
         return categories
 
     def _empty(self, reason="WHATEVER"):
-        e = empty()
+        e = Empty()
         e.name = reason
         e.confidence = "0.01"
         return [e]
