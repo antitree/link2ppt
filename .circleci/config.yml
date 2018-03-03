@@ -85,8 +85,8 @@ jobs:
       - run:
           name: install dependencies
           command: |
-            pip3 install pipenv --user
-            pipenv --three install
+            pip3 install pipenv --user 
+            pipenv --three install --skip-lock
             
 
       - save_cache:
