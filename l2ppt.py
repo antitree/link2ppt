@@ -25,6 +25,8 @@ from sumy.utils import get_stop_words
 from html.parser import HTMLParser
 import random
 import os
+import calendar
+from dateutil.relativedelta import relativedelta
 
 import categorizer
 
@@ -176,9 +178,15 @@ def get_instapaper(creds, full=False):
     links = ilink.handlelinks(il)
     # Only get the last 22 days
     if not full:
-        days = 22 * 60 * 60 * 24
+        t = datetime.datetime.today()
+        last = t - relativedelta(months=-1)
+        ff = first_friday_finder(last.year, last.month)
+        timesinceff = ff - t  #  The difference between today and last FF
+        
+        days = 22 * 60 *xzxz* 24
         #content = list(s for s in links if s["time"] > time.time() - 1728000)  # 20 days
         content = list(s for s in links if s["time"] > time.time() - 2592000)  # 30 days
+        content = list(s for s in links if s["time"] > time.time() - timesinceff.seconds)
         logging.info("Found %s articles" % len(content))
     else:
         content = list(s for s in links)
@@ -225,6 +233,16 @@ def teh_security(badness):
 
     
     return goodness
+
+def first_friday_finder(year, month):
+        #find next first friday
+    c = calendar.Calendar(firstweekday=calendar.SUNDAY)
+    monthcal = c.monthdatescalendar(year, month)
+    firstfriday = [day for week in monthcal for day in week if day.weekday() == calendar.FRIDAY and day.month 
+== month][0]
+    firstfriday = firstfriday.replace(hour=7,minute=00)
+    return firstfriday
+
 
 
 # def get_title(url):
