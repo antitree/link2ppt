@@ -179,14 +179,13 @@ def get_instapaper(creds, full=False):
     # Only get the last 22 days
     if not full:
         t = datetime.datetime.today()
-        last = t - relativedelta(months=-1)
-        ff = first_friday_finder(last.year, last.month)
-        timesinceff = ff - t  #  The difference between today and last FF
-        
-        days = 22 * 60 *xzxz* 24
-        #content = list(s for s in links if s["time"] > time.time() - 1728000)  # 20 days
-        content = list(s for s in links if s["time"] > time.time() - 2592000)  # 30 days
-        content = list(s for s in links if s["time"] > time.time() - timesinceff.seconds)
+        last = t - relativedelta(months=-1)  # get last month from now
+        ff = first_friday_finder(last.year, last.month)  # find last month's FF
+        timesinceff = t - ff  #  The difference between today and last FF
+        logging.info("Seconds since last first friday: %s" % timesinceff)
+        last_ff_date = time.time() + timesinceff.total_seconds()
+        logging.info("Last FF was found to be: %s" % last_ff_date)
+        content = list(s for s in links if s["time"] > last_ff_date)
         logging.info("Found %s articles" % len(content))
     else:
         content = list(s for s in links)
@@ -235,12 +234,13 @@ def teh_security(badness):
     return goodness
 
 def first_friday_finder(year, month):
-        #find next first friday
+    #find next first friday
     c = calendar.Calendar(firstweekday=calendar.SUNDAY)
     monthcal = c.monthdatescalendar(year, month)
     firstfriday = [day for week in monthcal for day in week if day.weekday() == calendar.FRIDAY and day.month 
 == month][0]
-    firstfriday = firstfriday.replace(hour=7,minute=00)
+    firstfriday = datetime.datetime.combine(firstfriday, datetime.datetime.min.time())
+    firstfriday = firstfriday.replace(hour=22,minute=00)
     return firstfriday
 
 
