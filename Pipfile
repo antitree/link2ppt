@@ -13,5 +13,3 @@ beautifulsoup4 = "*"
 htmlparser = "*"
 google-cloud-language = "*"
 python-dateutil = "*"
-#futures = { version = "3.1.1" dd}
-#futures = { file = "https://pypi.python.org/packages/1f/9e/7b2ff7e965fc654592269f2906ade1c7d705f1bf25b7d469fa153f7d19eb/futures-3.2.0.tar.gz#md5=d1b299a06b96ccb59f70324716dc0016"}
