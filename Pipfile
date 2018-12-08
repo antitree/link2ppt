@@ -1,6 +1,5 @@
 [[source]]
 url = "https://pypi.python.org/simple"
-
 verify_ssl = true
 
 [packages]
@@ -13,3 +12,5 @@ beautifulsoup4 = "*"
 htmlparser = "*"
 google-cloud-language = "*"
 python-dateutil = "*"
+grpcio = "*"
+pylint = "*"
