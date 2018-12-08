@@ -78,8 +78,12 @@ class Remark:
         return slide
 
     def summarize_categories(self):
-        categories = [slide["category"] for slide in self.slides]
-        categories = [x for x in categories]
+        '''Return a count of the most common categories'''
+        categories = []
+        for slide in self.slides:
+            categories += slide["category"]
+        #categories = [x for x in categories]
+        #print(categories)
         counter = collections.Counter(categories)
         return counter.most_common(5)
 
