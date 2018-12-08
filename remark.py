@@ -8,6 +8,7 @@
 
 import time
 import rimage
+import collections
 
 class Remark:
     def __init__(self, template=None):
@@ -76,12 +77,20 @@ class Remark:
         slide["highlights"] = highlights
         return slide
 
+    def summarize_categories(self):
+        categories = [slide["category"] for slide in self.slides]
+        counter = collections.Counter(categories)
+        return counter.most_common(5)
+
     def add_agenda(self):
+        category_chart = self.summarize_categories()
         slide = {}
         slide["title"] = "Agenda"
         titles = []
-        for s in self.slides:
-            titles.append(s["title"])
+        #for s in self.slides:
+        #    titles.append(s["title"])
+        for cat in category_chart:
+            titles.append("%s: %s" % (cat[0], cat[1]))
         slide["highlights"] = titles
         slide["url"] = ""
         slide["time"] = time.time()
