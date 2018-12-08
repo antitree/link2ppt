@@ -85,7 +85,7 @@ class Remark:
         #categories = [x for x in categories]
         #print(categories)
         counter = collections.Counter(categories)
-        return counter.most_common(5)
+        return counter.most_common(10)  # Set how long the list is in the title slide
 
     def add_agenda(self):
         category_chart = self.summarize_categories()
