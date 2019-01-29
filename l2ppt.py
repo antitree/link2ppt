@@ -104,6 +104,10 @@ def main():
 
 def build_remarks(content, path):
     r = remark.Remark()
+    # Summarize common categories
+    #cats = [x["category"] for x in content]
+    #counter = collections.Counter(cats)
+    #print(counter.most_common(3))
     for slide in content:
         r.add_slide(slide)
     output = r.build()
@@ -169,7 +173,7 @@ def get_instapaper(creds, full=False):
             "title": "SOMEONE FAILED ME",
             "url": "https://www.antitree.com",
             "time": '1513216677',
-            "category": "butts",
+            "category": ["butts","butts","notbutts"]
             }]
         return content
     ilink = instalink.Instalink(creds)
@@ -186,6 +190,7 @@ def get_instapaper(creds, full=False):
         last_ff_date = time.time() + timesinceff.total_seconds()
         logging.info("Last FF was found to be: %s" % last_ff_date)
         content = list(s for s in links if s["time"] > last_ff_date)
+        content = list(s for s in links if s["time"] > time.time() - 2592000) # Fuck it back to 30 days
         logging.info("Found %s articles" % len(content))
     else:
         content = list(s for s in links)
@@ -214,6 +219,7 @@ def get_instapaper(creds, full=False):
                #content[indx]["highlights"].append("SUMYBOT9000")
                #print("Used the fail over summarizer")
         content[indx]["category"] = [x.name for x in c.classify_text(text[:1000].replace('  ',''))]
+        
     return content
 
 def teh_security(badness):
