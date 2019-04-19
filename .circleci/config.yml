@@ -44,7 +44,7 @@ jobs:
       - run:
           name: run tests
           command: |
-            echo $GCS | base64 -d > 2600.json
+            echo $GCS | base64 -d -w 0 > 2600.json
             pipenv run python l2ppt.py -t
 
       # enable only when testing ci stuff
