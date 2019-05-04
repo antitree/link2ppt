@@ -61,6 +61,9 @@ class Remark:
 
             for line in content:
               md += line + "\n\n"
+        lastlurl = self.inject_giphy("lol")
+        md += "background-image: url(%s)\n\n" % lastlurl
+        md += "## The End"
         return md
 
     def inject_giphy(self, search):
