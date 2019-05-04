@@ -42,7 +42,7 @@ class giphy():
         try: 
             if r.status_code == 200:
                 response = json.loads(r.text)
-                image = response["gfycats"][0]["max2mbGif"]
+                image = response["gfycats"][0]["max5mbGif"]
                 return image
             return None
         except Exception as e:
