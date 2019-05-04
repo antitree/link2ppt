@@ -39,10 +39,15 @@ class giphy():
         searchurl = 'https://api.gfycat.com/v1/gfycats/search?search_text={}'.format(terms)
         auth_header = {"Bearer": self.GYFCATTOKEN}
         r = requests.get(searchurl, headers=auth_header)
-        response = json.loads(r.text)
-        
-        image = response["gfycats"][0]["max2mbGif"]
-        return image
+        try: 
+            if r.status_code == 200:
+                response = json.loads(r.text)
+                image = response["gfycats"][0]["max2mbGif"]
+                return image
+            return None
+        except Exception as e:
+            print(e)
+            print(r.text)
         #print("ok I'm ready ", self.GYFCATTOKEN)
         #authheader = 
         #curl -v -X POST https://api.gfycat.com/v1/oauth/token
