@@ -1,3 +1,4 @@
 *creds*
 *.pyc
 2600.json
+*.token
