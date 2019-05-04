@@ -101,6 +101,9 @@ jobs:
           name: build slides
           command: |
             echo $GCS | base64 -d > 2600.json 
+            mkdir auth
+            echo $FEEDLYREFRESH | base64 -d -w 0 > auth/refresh.token
+            echo $FEEDLYTOKEN | base64 -d -w -0 > auth/access.token
             pipenv run python l2ppt.py
 
       - store_artifacts:
