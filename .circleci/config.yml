@@ -104,7 +104,7 @@ jobs:
             mkdir auth
             echo $FEEDLYREFRESH | base64 -d -w 0 > auth/refresh.token
             echo $FEEDLYTOKEN | base64 -d -w 0 > auth/access.token
-            pipenv run python l2ppt.py
+            pipenv run python l2ppt.py -f ./auth
 
       - store_artifacts:
           path: build/2600.md
