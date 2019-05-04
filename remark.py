@@ -30,9 +30,20 @@ class Remark:
             #    content.append('background-position: bottom;')
             #    content.append('background-repeat: no-repeat;')
             #    content.append('background-size: contain;')
+            if "engagement" in slide.keys():
+                if slide["engagement"] == "None":
+                    content.append(
+                        '.popularity[![badge](/img/hipster.png)]'
+                    )
+                elif int(slide["engagement"]) > 500:
+                    content.append(
+                        '.popularity[![badge](/img/popular.png)]'
+                    )
+                else: print(slide["engagement"])
+                
             content.append("## " + slide["title"])
             if lurl:
-                  content.append('![lurl](%s)' % lurl)
+                  content.append('.lurl[![lurl](%s)]' % lurl)
                   #content.append("---")
 
             #highlights = []
@@ -44,8 +55,8 @@ class Remark:
                     content.append("- " + h)
             content.append("[" + slide["url"] + "](" + slide["url"] + ")")
             content.append(
-                ".footnote[%s - %s]" % (time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(int(slide["time"]))), slide["category"]))
-
+                ".footnote[%s - %s]" % (time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(int(slide["time"]))), slide["category"])
+                )
             content.append("---")
 
             for line in content:
@@ -75,6 +86,9 @@ class Remark:
             "Something else"
         ]
         slide["highlights"] = highlights
+        slide["engagement"] = "999"
+        slide["time"] = time.time()
+        slide["category"] = "test category"
         return slide
 
     def summarize_categories(self):
@@ -109,4 +123,10 @@ class Remark:
         return md
 
 if __name__ == '__main__':
-    print("No, it's the other one")
+    r = Remark()
+    test = r._test_slide()
+    
+    r.add_slide(test)
+    r.add_slide(test)
+    
+    print(r.build_slides())
