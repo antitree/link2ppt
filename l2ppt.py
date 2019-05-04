@@ -42,6 +42,11 @@ except:
 #import urllib2
 from bs4 import BeautifulSoup
 
+from feedly.session import FeedlySession
+from feedly.stream import StreamOptions
+from feedly.session import FileAuthStore
+from pathlib import Path
+
 logging.basicConfig(level="INFO")
 
 
@@ -63,6 +68,10 @@ def main():
     parser.add_argument('-i',
         dest='icreds',
         help='File with creds for instapaper')
+    parser.add_argument('-f',
+        dest='fcreds',
+        help="Path to feedly auth creds"
+    )
     parser.add_argument('--full',
         help="Download full list from instapaper",
         action="store_true")
@@ -87,6 +96,8 @@ def main():
             full = False
         creds = open(args.icreds).read().splitlines()
         content = get_instapaper(creds, full)
+    elif args.fcreds:
+        content = get_feedly(args.fcreds)
     else:
         creds = []
         full = False
@@ -155,12 +166,62 @@ def lazy_summarizer(content):
         tokenizer = nltk.data.load('tokenizers/punkt/english.pickle')
     
     highlights = tokenizer.tokenize(content)[:8]
-    print('-'*20)
-    print(content)
-    print('-'*20)
-    print(highlights)
+    #print('-'*20)
+    #print(content)
+    #print('-'*20)
+    #print(highlights)
     return highlights
 
+def get_feedly(auth, full=False):
+    sopts = StreamOptions()  # 
+    os.environ["TZ"] = "US/Eastern"
+    time.tzset()
+    t = datetime.datetime.today()
+    last = t - relativedelta(months=1)  # get last month from now
+    sopts.newerThan = int(first_friday_finder(last.year, last.month).timestamp())*1000
+    print(sopts.newerThan)
+    print(time.time())
+    #sopts.newerThan = 1556731092000  ## TODO fix
+    auth_path = Path("./auth")
+    auth = FileAuthStore(auth_path)
+    fsess = FeedlySession(auth)
+    board =fsess.user.get_tag("2600")
+    content = [x for x in board.stream_contents(sopts)]
+
+    c = categorizer.Categorize()
+    for indx, line in enumerate(content):
+        if "content" in line.json.keys():
+            htmltext = line["content"]["content"]
+        elif "fullContent" in line.json.keys():
+            htmltext = line["fullContent"]
+        elif "summary" in line.json.keys():
+            htmltext = line["summary"]["content"]
+        else: 
+            print(line.json.keys())
+            print("-"*20)
+            print(line.json)
+            raise KeyError("Content nor fullcontent is in the json")
+            break
+        text = BeautifulSoup(htmltext, "lxml").get_text()
+
+        
+        # Assign a category from google API
+        content[indx]["category"] = [x.name for x in c.classify_text(text[:1000].replace('  ',''))]
+        #content[indx]["category"] = ["butts"]
+        
+        # Summarize the first few lines
+        content[indx]["highlights"] = lazy_summarizer(text)
+
+        if "canonicalUrl" in line.json.keys():
+            url = line["canonicalUrl"]
+        elif "alternate" in line.json.keys():
+            url = line["alternate"][0]["href"]
+        # Feedly JSON is completely random. Things are in different places
+        content[indx]["url"] = url
+
+
+        content[indx]["time"] = line["published"]
+    return content
 
 def get_instapaper(creds, full=False):
     global TESTMODE
@@ -241,6 +302,8 @@ def teh_security(badness):
 
 def first_friday_finder(year, month):
     #find next first friday
+    os.environ["TZ"] = "US/Eastern"
+    time.tzset()
     c = calendar.Calendar(firstweekday=calendar.SUNDAY)
     monthcal = c.monthdatescalendar(year, month)
     firstfriday = [day for week in monthcal for day in week if day.weekday() == calendar.FRIDAY and day.month 
