@@ -30,7 +30,8 @@ class Remark:
             #    content.append('background-position: bottom;')
             #    content.append('background-repeat: no-repeat;')
             #    content.append('background-size: contain;')
-            if "engagement" in slide.keys():
+            try:
+              if "engagement" in slide.keys():
                 if " sip " in slide["title"].lower():
                     content.append(
                         '.popularity[![badge](/img/pee.png)]'
@@ -44,6 +45,8 @@ class Remark:
                         '.popularity[![badge](/img/popular.png)]'
                     )
                 else: print(slide["engagement"])
+            except:
+              print("SOMETHING WEIRD HAPPENED IN THE SLIDE BADGES")
                 
             content.append("## " + slide["title"])
             if lurl:
@@ -135,5 +138,6 @@ if __name__ == '__main__':
     
     r.add_slide(test)
     r.add_slide(test)
+    print(test.keys())
     
     print(r.build_slides())
