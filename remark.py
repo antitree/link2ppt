@@ -9,6 +9,7 @@
 import time
 import rimage
 import collections
+import logging
 
 class Remark:
     def __init__(self, template=None):
@@ -33,20 +34,24 @@ class Remark:
             try:
               if "engagement" in slide.json.keys():
                 if " sip " in slide["title"].lower():
+                    logging.info("SIP found in title. Adding Pee")
                     content.append(
                         '.popularity[![badge](/img/pee.png)]'
                     ) 
                 elif slide["engagement"] == "None" or int(slide["engagement"]) == 0:
+                    logging.info("No one cares about this article. Adding hipster")
                     content.append(
                         '.popularity[![badge](/img/hipster.png)]'
                     )
-                elif int(slide["engagement"]) > 500:
+                elif int(slide["engagement"]) > 900:
+                    logging.info("Over 900 people read this article. Adding pop icon")
                     content.append(
                         '.popularity[![badge](/img/popular.png)]'
                     )
-                else: print(slide["engagement"])
+                else: logging.debug("Slide popularity score: %s" % slide["engagement"])
             except:
               print("SOMETHING WEIRD HAPPENED IN THE SLIDE BADGES")
+              print(slide)
                 
             content.append("## " + slide["title"])
             if lurl:
@@ -68,7 +73,9 @@ class Remark:
 
             for line in content:
               md += line + "\n\n"
-        lastlurl = self.inject_giphy("lol")
+        #lastlurl = self.inject_giphy("lol")
+        giphy = rimage.giphy()
+        lastlurl = giphy.total_random()
         md += "background-image: url(%s)\n\n" % lastlurl
         md += "## The End"
         return md

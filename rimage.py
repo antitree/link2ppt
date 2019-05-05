@@ -36,7 +36,7 @@ class giphy():
     def get_more_image(self, terms):
         if self.GYFCATTOKEN == "":
             self._gyfcat_reauth_()
-        searchurl = 'https://api.gfycat.com/v1/gfycats/search?search_text={}'.format(terms)
+        searchurl = 'https://api.gfycat.com/v1/gfycats/search?search_text={}&count=1'.format(terms)
         auth_header = {"Bearer": self.GYFCATTOKEN}
         r = requests.get(searchurl, headers=auth_header)
         try: 
@@ -64,10 +64,19 @@ class giphy():
          response = json.loads(r.text)
          self.GYFCATTOKEN = response["access_token"]
 
+    def total_random(self):
+        url = 'https://api.gfycat.com/v1/tags/trending/populated?tagCount=1&gfyCount=1'
+        auth_header = {"Bearer": self.GYFCATTOKEN}
+        r = requests.get(url, headers=auth_header)
+        response = json.loads(r.text)
+        #print(response)
+        image = self.get_more_image(response["tags"][0]["gfycats"][0]["posterUrl"])
+        return image
 
 if __name__ == '__main__':
   print("Classy...looking for balls")
   a = giphy()
-  b = a.get_image(["balls","donkey","and","yup","ok"])
+  #b = a.get_image(["balls","donkey","and","yup","ok"])
+  b = a.total_random()
   print(b)
   print('Im done?')

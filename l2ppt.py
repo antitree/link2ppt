@@ -107,7 +107,7 @@ def main():
             creds.append(os.environ['INSTA3'])
             creds.append(os.environ['INSTA4'])
         except: 
-            print("Missing INSTA[1-4] env vars")
+            logging.error("Missing INSTA[1-4] env vars")
             sys.exit()
         content = get_instapaper(creds, full)
 
@@ -120,7 +120,6 @@ def build_remarks(content, path):
     #counter = collections.Counter(cats)
     #print(counter.most_common(3))
     for slide in content:
-        print(type(slide))
         r.add_slide(slide)
     output = r.build()
     ### Convert from unstripped unicode shit
@@ -162,7 +161,7 @@ def lazy_summarizer(content):
     try: 
         tokenizer = nltk.data.load('tokenizers/punkt/english.pickle')
     except LookupError:
-        print("Missing Punkt NLTK data. Downloading now...")
+        logging.error("Missing Punkt NLTK data. Downloading now...")
         nltk.download('punkt')
         tokenizer = nltk.data.load('tokenizers/punkt/english.pickle')
     
@@ -180,8 +179,8 @@ def get_feedly(auth, full=False):
     t = datetime.datetime.today()
     last = t - relativedelta(months=1)  # get last month from now
     sopts.newerThan = int(first_friday_finder(last.year, last.month).timestamp())*1000
-    print(sopts.newerThan)
-    print(time.time())
+    logging.info("Finding stories newer than: %s" % sopts.newerThan)
+    logging.info("Current time: %s" % time.time())
     #sopts.newerThan = 1556731092000  ## TODO fix
     auth_path = Path("./auth")
     auth = FileAuthStore(auth_path)
@@ -205,9 +204,9 @@ def get_feedly(auth, full=False):
         elif "summary" in line.json.keys():
             htmltext = line["summary"]["content"]
         else: 
-            print(line.json.keys())
-            print("-"*20)
-            print(line.json)
+            logging.error(line.json.keys())
+            logging.error("-"*20)
+            logging.error(line.json)
             raise KeyError("Content nor fullcontent is in the json")
             break
         text = BeautifulSoup(htmltext, "lxml").get_text()
@@ -233,6 +232,7 @@ def get_feedly(auth, full=False):
     return content
 
 def get_instapaper(creds, full=False):
+    logging.warning("INSTAPAPER is deprecated and might now work")
     global TESTMODE
     if TESTMODE:
         content = [{
