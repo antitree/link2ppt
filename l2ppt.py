@@ -120,6 +120,7 @@ def build_remarks(content, path):
     #counter = collections.Counter(cats)
     #print(counter.most_common(3))
     for slide in content:
+        print(type(slide))
         r.add_slide(slide)
     output = r.build()
     ### Convert from unstripped unicode shit
@@ -188,7 +189,14 @@ def get_feedly(auth, full=False):
     board =fsess.user.get_tag("2600")
     content = [x for x in board.stream_contents(sopts)]
 
-    c = categorizer.Categorize()
+    try: 
+        c = categorizer.Categorize()
+        try_categorize = True
+    except:
+        logging.error("Google Creds were not found")
+        try_categorize = False
+
+
     for indx, line in enumerate(content):
         if "content" in line.json.keys():
             htmltext = line["content"]["content"]
@@ -204,11 +212,12 @@ def get_feedly(auth, full=False):
             break
         text = BeautifulSoup(htmltext, "lxml").get_text()
 
-        
-        # Assign a category from google API
-        content[indx]["category"] = [x.name for x in c.classify_text(text[:1000].replace('  ',''))]
-        #content[indx]["category"] = ["butts"]
-        
+        if try_categorize:
+            # Assign a category from google API
+            content[indx]["category"] = [x.name for x in c.classify_text(text[:1000].replace('  ',''))]
+            #content[indx]["category"] = ["butts"]
+        else: content[indx]["category"] = ["unknown"]
+            
         # Summarize the first few lines
         content[indx]["highlights"] = lazy_summarizer(text)
 

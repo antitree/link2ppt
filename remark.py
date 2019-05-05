@@ -31,12 +31,12 @@ class Remark:
             #    content.append('background-repeat: no-repeat;')
             #    content.append('background-size: contain;')
             try:
-              if "engagement" in slide.keys():
+              if "engagement" in slide.json.keys():
                 if " sip " in slide["title"].lower():
                     content.append(
                         '.popularity[![badge](/img/pee.png)]'
                     ) 
-                elif slide["engagement"] == "None":
+                elif slide["engagement"] == "None" or int(slide["engagement"]) == 0:
                     content.append(
                         '.popularity[![badge](/img/hipster.png)]'
                     )
