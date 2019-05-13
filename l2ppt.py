@@ -223,7 +223,7 @@ def get_feedly(auth, full=False):
             url = line["alternate"][0]["href"]
         # Feedly JSON is completely random. Things are in different places
         content[indx]["url"] = url
-        content[indx]["time"] = int(str(line["published"])[:-2])
+        content[indx]["time"] = int(line["published"])/1000.0
     return content
 
 def get_instapaper(creds, full=False):
