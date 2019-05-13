@@ -67,7 +67,7 @@ class Remark:
                     content.append("- " + h)
             content.append("[" + slide["url"] + "](" + slide["url"] + ")")
             content.append(
-                ".footnote[%s - %s]" % (time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(int(slide["time"]))), slide["category"])
+                ".footnote[%s - %s]" % (time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(int(slide["time"])/1000.0)), slide["category"])
                 )
             content.append("---")
 
