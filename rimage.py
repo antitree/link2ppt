@@ -38,8 +38,9 @@ class giphy():
             self._gyfcat_reauth_()
         searchurl = 'https://api.gfycat.com/v1/gfycats/search?search_text={}&count=1'.format(terms)
         auth_header = {"Bearer": self.GYFCATTOKEN}
-        r = requests.get(searchurl, headers=auth_header)
+        r = None
         try: 
+            r = requests.get(searchurl, headers=auth_header)
             if r.status_code == 200:
                 response = json.loads(r.text)
                 image = response["gfycats"][0]["max5mbGif"]
@@ -48,30 +49,42 @@ class giphy():
         except Exception as e:
             print(e)
             print(r.text)
+            return None
         #print("ok I'm ready ", self.GYFCATTOKEN)
         #authheader = 
         #curl -v -X POST https://api.gfycat.com/v1/oauth/token
         #-d '{"code":"{code}", "client_id":"{clientId}", "client_secret": "{clientSecret}", "grant_type": "authorization_code","redirect_uri":"{redirectUri}"}'
 
     def _gyfcat_reauth_(self):
-         url = 'https://api.gfycat.com/v1/oauth/token'
-         body = {
+        url = 'https://api.gfycat.com/v1/oauth/token'
+        body = {
             "grant_type":"client_credentials",
             "client_id":"{}".format(self.GYFCATCID),
             "client_secret":"{}".format(self.GYFCATSECRET),
         }
-         r = requests.post(url,data=json.dumps(body))
-         response = json.loads(r.text)
-         self.GYFCATTOKEN = response["access_token"]
+        r=None
+        try: 
+            r = requests.post(url,data=json.dumps(body))
+            response = json.loads(r.text)
+            self.GYFCATTOKEN = response["access_token"]
+        except Exception as e: 
+            print(e)
+            print(r.text)
 
     def total_random(self):
         url = 'https://api.gfycat.com/v1/tags/trending/populated?tagCount=1&gfyCount=1'
         auth_header = {"Bearer": self.GYFCATTOKEN}
-        r = requests.get(url, headers=auth_header)
-        response = json.loads(r.text)
-        #print(response)
-        image = self.get_more_image(response["tags"][0]["gfycats"][0]["posterUrl"])
-        return image
+        r = None
+        try: 
+            r = requests.get(url, headers=auth_header)
+            response = json.loads(r.text)
+            #print(response)
+            image = self.get_more_image(response["tags"][0]["gfycats"][0]["posterUrl"])
+            return image
+        except exception as e:
+            print(e)
+            print(r)
+            return None
 
 if __name__ == '__main__':
   print("Classy...looking for balls")

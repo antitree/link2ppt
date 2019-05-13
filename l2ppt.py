@@ -30,10 +30,7 @@ from dateutil.relativedelta import relativedelta
 
 import categorizer
 
-try:
-    import remark
-except:
-    print("no remark support loaded")
+import remark
 
 try:
     import instalink
@@ -226,9 +223,7 @@ def get_feedly(auth, full=False):
             url = line["alternate"][0]["href"]
         # Feedly JSON is completely random. Things are in different places
         content[indx]["url"] = url
-
-
-        content[indx]["time"] = line["published"]
+        content[indx]["time"] = int(str(line["published"])[:-2])
     return content
 
 def get_instapaper(creds, full=False):
