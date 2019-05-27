@@ -39,13 +39,12 @@ except:
 #import urllib2
 from bs4 import BeautifulSoup
 
-from feedly.session import FeedlySession
-from feedly.stream import StreamOptions
-from feedly.session import FileAuthStore
+from feedly.api_client.session import FeedlySession
+from feedly.api_client.stream import StreamOptions
+from feedly.api_client.session import FileAuthStore
 from pathlib import Path
 
 logging.basicConfig(level="INFO")
-
 
 
 
