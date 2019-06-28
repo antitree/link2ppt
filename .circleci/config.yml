@@ -156,6 +156,7 @@ workflows:
           requires:
             #- build
             - production  # test
+            - production_containers
   nightly:
     triggers:
       - schedule:
@@ -168,6 +169,7 @@ workflows:
       - deploy:
           requires:
             - production
+            - production_containers
           filters:
             branches:
               only: master
