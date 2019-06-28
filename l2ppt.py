@@ -68,6 +68,9 @@ def main():
         dest='fcreds',
         help="Path to feedly auth creds"
     )
+    parser.add_argument('--tag',
+        dest='ftag',
+        help="Optional feedly board name")
     parser.add_argument('--full',
         help="Download full list from instapaper",
         action="store_true")
@@ -84,6 +87,10 @@ def main():
 
     content = []
 
+    if args.ftag: 
+        tag = args.ftag
+    else:
+        tag = "2600"
 
     if args.icreds:
         if args.full:
@@ -93,7 +100,7 @@ def main():
         creds = open(args.icreds).read().splitlines()
         content = get_instapaper(creds, full)
     elif args.fcreds:
-        content = get_feedly(args.fcreds)
+        content = get_feedly(args.fcreds, tag=tag)
     else:
         creds = []
         full = False
@@ -107,7 +114,7 @@ def main():
             sys.exit()
         content = get_instapaper(creds, full)
 
-    build_remarks(content, 'build/2600.md')
+    build_remarks(content, 'build/%s.md' % tag)
 
 def build_remarks(content, path):
     r = remark.Remark()
@@ -168,7 +175,7 @@ def lazy_summarizer(content):
     #print(highlights)
     return highlights
 
-def get_feedly(auth, full=False):
+def get_feedly(auth, tag="2600", full=False):
     sopts = StreamOptions()  # 
     os.environ["TZ"] = "US/Eastern"
     time.tzset()
@@ -181,7 +188,7 @@ def get_feedly(auth, full=False):
     auth_path = Path("./auth")
     auth = FileAuthStore(auth_path)
     fsess = FeedlySession(auth)
-    board =fsess.user.get_tag("2600")
+    board =fsess.user.get_tag(tag)
     content = [x for x in board.stream_contents(sopts)]
 
     try: 

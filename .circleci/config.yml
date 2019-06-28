@@ -4,62 +4,6 @@
 #
 version: 2
 jobs:
-  build:
-    docker:
-      # specify the version you desire here
-      # use `-browsers` prefix for selenium tests, e.g. `3.6.1-browsers`
-      - image: circleci/python:3
-      
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/postgres:9.4
-
-    working_directory: ~/repo
-
-    steps:
-      - checkout
-
-      # Download and cache dependencies
-      - restore_cache:
-          keys:
-          - v1-dependencies-{{ checksum "Pipfile" }}
-          # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
-
-      - run: echo 'export PATH="$PATH:/home/circleci/.local/bin"' >> $BASH_ENV
-      - run: cat $BASH_ENV
-      - run:
-          name: install dependencies
-          command: |
-            pip3 install pipenv --user
-            pipenv --three install 
-
-      - save_cache:
-          paths:
-            - ~/.cache
-            - ~/nltk_data
-          key: v1-dependencies-{{ checksum "Pipfile" }}
-        
-      - run:
-          name: run tests
-          command: |
-            echo $GCS | base64 -d -w 0 > 2600.json
-            mkdir auth
-            echo $FEEDLYREFRESH | base64 -d -w 0 > auth/refresh.token
-            echo $FEEDLYTOKEN | base64 -d -w -0 > auth/access.token
-            pipenv run python l2ppt.py -t -f ./auth
-
-      # enable only when testing ci stuff
-      # - persist_to_workspace: 
-      #     root: /home/circleci
-      #     paths:
-      #       - repo
-
-      # - store_artifacts:
-      #     path: build/2600.md
-      #     destination: build/2600.md
-
   production:
     docker:
       # specify the version you desire here
@@ -109,6 +53,61 @@ jobs:
       - store_artifacts:
           path: build/2600.md
           destination: build/2600.md
+
+      - persist_to_workspace: 
+          root: /home/circleci
+          paths:
+            - repo
+
+  production_containers:
+    docker:
+      # specify the version you desire here
+      # use `-browsers` prefix for selenium tests, e.g. `3.6.1-browsers`
+      - image: circleci/python:3
+      
+      # Specify service dependencies here if necessary
+      # CircleCI maintains a library of pre-built images
+      # documented at https://circleci.com/docs/2.0/circleci-images/
+      # - image: circleci/postgres:9.4
+
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "Pipfile" }}
+          # fallback to using the latest cache if no exact match is found
+          - v1-dependencies-
+
+      - run: echo 'export PATH="$PATH:/home/circleci/.local/bin"' >> $BASH_ENV
+      - run: cat $BASH_ENV
+      - run:
+          name: install dependencies
+          command: |
+            pip3 install pipenv --user 
+            pipenv --three install 
+            
+
+      - save_cache:
+          paths:
+            - ~/.cache
+          key: v1-dependencies-{{ checksum "Pipfile" }}
+        
+      - run:
+          name: build slides
+          command: |
+            echo $GCS | base64 -d > 2600.json 
+            mkdir auth
+            echo $FEEDLYREFRESH | base64 -d -w 0 > auth/refresh.token
+            echo $FEEDLYTOKEN | base64 -d -w 0 > auth/access.token
+            pipenv run python l2ppt.py -f ./auth --tag Docker
+
+      - store_artifacts:
+          path: build/containers.md
+          destination: build/containers.md
 
       - persist_to_workspace: 
           root: /home/circleci
