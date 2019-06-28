@@ -106,8 +106,8 @@ jobs:
             pipenv run python l2ppt.py -f ./auth --tag Docker
 
       - store_artifacts:
-          path: build/containers.md
-          destination: build/containers.md
+          path: build/Docker.md
+          destination: build/Docker.md
 
       - persist_to_workspace: 
           root: /home/circleci
@@ -151,6 +151,7 @@ workflows:
     jobs:
       #- build
       - production
+      - production_containers
       - deploy:
           requires:
             #- build
