@@ -166,6 +166,7 @@ workflows:
               only: master
     jobs:
       - production
+      - production_containers
       - deploy:
           requires:
             - production
