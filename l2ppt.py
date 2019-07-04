@@ -54,6 +54,8 @@ LAZYLIST = [
     "slashdot.org",
     ]
 TESTMODE = False
+NOMEME = False
+NOGOOGLE = False
 
 
 def main():
@@ -78,12 +80,25 @@ def main():
         dest='testmode',
         help="Enable test mode",
         action="store_true")
+    parser.add_argument('--no-meme',
+        dest='nomeme',
+        help="Disable meme'ing mode",
+        action="store_true")
+    parser.add_argument('--no-google',
+        dest='nogoogle',
+        help="Disable using Google API's",
+        action="store_true")
+
 
     args = parser.parse_args()
 
     if args.testmode: 
         TESTMODE = True
         logging.basicConfig(level="DEBUG")
+    if args.nogoogle:
+        NOGOOGLE = True
+    if args.nomeme:
+        NOMEME = True
 
     content = []
 
@@ -118,6 +133,7 @@ def main():
 
 def build_remarks(content, path):
     r = remark.Remark()
+    r.nomeme = NOMEME
     # Summarize common categories
     #cats = [x["category"] for x in content]
     #counter = collections.Counter(cats)
@@ -191,10 +207,15 @@ def get_feedly(auth, tag="2600", full=False):
     board =fsess.user.get_tag(tag)
     content = [x for x in board.stream_contents(sopts)]
 
-    try: 
+
+    if NOGOOGLE or TESTMODE:
+        logging.debug("Google categorizer disabled")
+        try_categorize = False
+    else:
+      try: 
         c = categorizer.Categorize()
         try_categorize = True
-    except:
+      except:
         logging.error("Google Creds were not found")
         try_categorize = False
 
@@ -218,7 +239,7 @@ def get_feedly(auth, tag="2600", full=False):
             # Assign a category from google API
             content[indx]["category"] = [x.name for x in c.classify_text(text[:1000].replace('  ',''))]
             #content[indx]["category"] = ["butts"]
-        else: content[indx]["category"] = ["unknown"]
+        else: content[indx]["category"] = ["uncategorized"]
             
         # Summarize the first few lines
         content[indx]["highlights"] = lazy_summarizer(text)
@@ -230,67 +251,6 @@ def get_feedly(auth, tag="2600", full=False):
         # Feedly JSON is completely random. Things are in different places
         content[indx]["url"] = url
         content[indx]["time"] = int(line["published"])/1000.0
-    return content
-
-def get_instapaper(creds, full=False):
-    logging.warning("INSTAPAPER is deprecated and might now work")
-    global TESTMODE
-    if TESTMODE:
-        content = [{
-            "highlights": ["FAKE NEWS"],
-            "summarizer": "lazy",
-            "bookmark_id": "42",
-            "text": "Weird butts",
-            "title": "SOMEONE FAILED ME",
-            "url": "https://www.antitree.com",
-            "time": '1513216677',
-            "category": ["butts","butts","notbutts"]
-            }]
-        return content
-    ilink = instalink.Instalink(creds)
-    ilink.login()
-    il = ilink.getlinks()
-    links = ilink.handlelinks(il)
-    # Only get the last 22 days
-    if not full:
-        t = datetime.datetime.today()
-        last = t - relativedelta(months=-1)  # get last month from now
-        ff = first_friday_finder(last.year, last.month)  # find last month's FF
-        timesinceff = t - ff  #  The difference between today and last FF
-        logging.info("Seconds since last first friday: %s" % timesinceff)
-        last_ff_date = time.time() + timesinceff.total_seconds()
-        logging.info("Last FF was found to be: %s" % last_ff_date)
-        content = list(s for s in links if s["time"] > last_ff_date)
-        content = list(s for s in links if s["time"] > time.time() - 2592000) # Fuck it back to 30 days
-        logging.info("Found %s articles" % len(content))
-    else:
-        content = list(s for s in links)
-
-    c = categorizer.Categorize()
-    for indx, line in enumerate(content):
-        #if not line["highlights"]: ## TODO missing what do do if there are highlights
-        if True:
-            logging.debug("No highlights found. adding some")
-            logging.info("line[bookmarkid]= %s" % line["bookmark_id"])
-            htmltext = ilink.gettext(line["bookmark_id"])
-            text = BeautifulSoup(htmltext, "lxml").get_text()
-            #text = unicodedata.normalize('NFKD', text).encode('ascii', 'ignore')
-            # this randomly choosing how to summarize. Great
-            # yeah i took that out. IT fucked me because I forgot about it. 
-            if content[indx]["summarizer"] == "lazy":
-               content[indx]["highlights"] = lazy_summarizer(text)
-               #content[indx]["highlights"].append("LAZYBOT")
-               #print("used the lazy summarizer")
-            elif content[indx]["summarizer"] == "special":
-               content[indx]["highlights"] = "todo"
-            else:
-           #content[indx]["highlights"] = desperate_summarizer(text)
-               #content[indx]["highlights"] = honest_summarizer(text)
-               content[indx]["highlights"] = lazy_summarizer(text)
-               #content[indx]["highlights"].append("SUMYBOT9000")
-               #print("Used the fail over summarizer")
-        content[indx]["category"] = [x.name for x in c.classify_text(text[:1000].replace('  ',''))]
-        
     return content
 
 def teh_security(badness):
@@ -322,50 +282,6 @@ def first_friday_finder(year, month):
     firstfriday = firstfriday.replace(hour=22,minute=00)
     return firstfriday
 
-
-
-# def get_title(url):
-#     try:
-#         # 3s timeout
-#         f = urllib2.urlopen(url, tmeout=3000)
-#         soup = BeautifulSoup(f)
-#         f.close()
-
-#         if soup.title.string:
-#             logging.debug("Title found as: %s" % soup.title.string)
-#             return soup.title.string
-#         else:
-#             return "No title found"
-#     except:
-#         logging.error("URL: %s had an error" % url)
-#         return "Blank"
-
-
-# def parse_csv(file):
-#     # is csv file?
-#     #csvobj = []
-#     with open(file, 'rb') as csvfile:
-#         urllist = csv.reader(csvfile, delimiter=',', quotechar='|')
-#         content = []
-#         for row in urllist:
-#             ## If url TODO
-#             record = {}
-#             record["url"] = row[0]
-#             try:
-#                 record["author"] = row[1]
-#             except IndexError:
-#                 record["author"] = None
-
-#             try:
-#                 record["date"] = row[2]
-#             except IndexError:
-#                 record["date"] = None
-#             record["title"] = get_title(row[0])
-
-#             ## add to slide
-#             content.append(record)
-#             #add_slide(record)
-#         return content
 
 
 

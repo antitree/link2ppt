@@ -16,6 +16,7 @@ class Remark:
         ## Create new remark instance
         self.slides = []
         self.md = []
+        self.nomeme = False
 
     def build_slides(self):
         """ Receive a dict containing title, highlights(list), and url
@@ -81,6 +82,9 @@ class Remark:
         return md
 
     def inject_giphy(self, search):
+        if self.nomeme:
+            logging.debug('Meming disabled. :sad_face:')
+        return False
         if True:
             # Get the first 2 words in the title
             search = search.split()[:2]
