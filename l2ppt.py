@@ -61,6 +61,8 @@ NOGOOGLE = False
 def main():
     global OUTPUT
     global TESTMODE
+    global NOGOOGLE 
+    global NOMEME
     # Handle arguments
     parser = argparse.ArgumentParser(description="Download instapaper and do cool things with it.")
     parser.add_argument('-i',
@@ -95,6 +97,7 @@ def main():
     if args.testmode: 
         TESTMODE = True
         logging.basicConfig(level="DEBUG")
+        logging.info("Debug mode enabled")
     if args.nogoogle:
         NOGOOGLE = True
     if args.nomeme:
