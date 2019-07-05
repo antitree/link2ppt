@@ -84,7 +84,7 @@ class Remark:
     def inject_giphy(self, search):
         if self.nomeme:
             logging.debug('Meming disabled. :sad_face:')
-        return False
+            return False
         if True:
             # Get the first 2 words in the title
             search = search.split()[:2]
