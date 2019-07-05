@@ -135,6 +135,7 @@ def main():
     build_remarks(content, 'build/%s.md' % tag)
 
 def build_remarks(content, path):
+    global NOMEME
     r = remark.Remark()
     r.nomeme = NOMEME
     # Summarize common categories
