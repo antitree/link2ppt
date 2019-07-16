@@ -50,9 +50,10 @@ class Remark:
                         '.popularity[![badge](/img/popular.png)]'
                     )
                 else: logging.debug("Slide popularity score: %s" % slide["engagement"])
-            except:
-              print("SOMETHING WEIRD HAPPENED IN THE SLIDE BADGES")
-              print(slide)
+            except Exception as e:
+              logging.error("SOMETHING WEIRD HAPPENED IN THE SLIDE BADGES")
+              logging.error(exception.message)
+              logging.error(slide)
                 
             content.append("## " + slide["title"])
             if lurl:
@@ -84,7 +85,7 @@ class Remark:
     def inject_giphy(self, search):
         if self.nomeme:
             logging.debug('Meming disabled. :sad_face:')
-        return False
+            return False
         if True:
             # Get the first 2 words in the title
             search = search.split()[:2]

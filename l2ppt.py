@@ -217,6 +217,7 @@ def get_feedly(auth, tag="2600", full=False):
     else:
       try: 
         c = categorizer.Categorize()
+        logging.info("Google categorizer enabled")
         try_categorize = True
       except:
         logging.error("Google Creds were not found")
