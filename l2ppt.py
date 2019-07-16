@@ -209,7 +209,7 @@ def get_feedly(auth, tag="2600", full=False):
     auth = FileAuthStore(auth_path)
     fsess = FeedlySession(auth)
     board =fsess.user.get_tag(tag)
-    content = [x for x in board.stream_contents(sopts)]
+    content = [dict(x.json) for x in board.stream_contents(sopts)]
 
 
     if NOGOOGLE or TESTMODE:
@@ -223,19 +223,19 @@ def get_feedly(auth, tag="2600", full=False):
       except:
         logging.error("Google Creds were not found")
         try_categorize = False
-
+    
 
     for indx, line in enumerate(content):
-        if "content" in line.json.keys():
+        if "content" in line.keys():
             htmltext = line["content"]["content"]
-        elif "fullContent" in line.json.keys():
+        elif "fullContent" in line.keys():
             htmltext = line["fullContent"]
-        elif "summary" in line.json.keys():
+        elif "summary" in line.keys():
             htmltext = line["summary"]["content"]
         else: 
-            logging.error(line.json.keys())
+            logging.error(line.keys())
             logging.error("-"*20)
-            logging.error(line.json)
+            logging.error(line)
             raise KeyError("Content nor fullcontent is in the json")
             break
         text = BeautifulSoup(htmltext, "lxml").get_text()
@@ -249,9 +249,9 @@ def get_feedly(auth, tag="2600", full=False):
         # Summarize the first few lines
         content[indx]["highlights"] = lazy_summarizer(text)
 
-        if "canonicalUrl" in line.json.keys():
+        if "canonicalUrl" in line.keys():
             url = line["canonicalUrl"]
-        elif "alternate" in line.json.keys():
+        elif "alternate" in line.keys():
             url = line["alternate"][0]["href"]
         # Feedly JSON is completely random. Things are in different places
         content[indx]["url"] = url

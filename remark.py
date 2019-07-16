@@ -22,6 +22,7 @@ class Remark:
         """ Receive a dict containing title, highlights(list), and url
         slide["title"], slide["url"], slide["higlights"] """
         md = ""
+
         for slide in reversed(self.slides):
             content = []
             #content.append("class: center, middle") ##TODO change to dynamic
@@ -33,7 +34,7 @@ class Remark:
             #    content.append('background-repeat: no-repeat;')
             #    content.append('background-size: contain;')
             try:
-              if "engagement" in dict(slide).keys():
+              if "engagement" in slide.keys():
                 if " sip " in slide["title"].lower():
                     logging.info("SIP found in title. Adding Pee")
                     content.append(
@@ -52,7 +53,7 @@ class Remark:
                 else: logging.debug("Slide popularity score: %s" % slide["engagement"])
             except Exception as e:
               logging.error("SOMETHING WEIRD HAPPENED IN THE SLIDE BADGES")
-              logging.error(e.message)
+              logging.error(e)
               logging.error(slide)
                 
             content.append("## " + slide["title"])
