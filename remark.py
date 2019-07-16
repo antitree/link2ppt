@@ -52,7 +52,7 @@ class Remark:
                 else: logging.debug("Slide popularity score: %s" % slide["engagement"])
             except Exception as e:
               logging.error("SOMETHING WEIRD HAPPENED IN THE SLIDE BADGES")
-              logging.error(exception.message)
+              logging.error(e.message)
               logging.error(slide)
                 
             content.append("## " + slide["title"])
