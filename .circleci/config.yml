@@ -103,7 +103,7 @@ jobs:
             mkdir auth
             echo $FEEDLYREFRESH | base64 -d -w 0 > auth/refresh.token
             echo $FEEDLYTOKEN | base64 -d -w 0 > auth/access.token
-            pipenv run python l2ppt.py -f ./auth --tag Docker
+            pipenv run python l2ppt.py -f ./auth --tag Docker --no-meme
 
       - store_artifacts:
           path: build/Docker.md
