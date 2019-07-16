@@ -33,7 +33,7 @@ class Remark:
             #    content.append('background-repeat: no-repeat;')
             #    content.append('background-size: contain;')
             try:
-              if "engagement" in slide.json.keys():
+              if "engagement" in dict(slide).keys():
                 if " sip " in slide["title"].lower():
                     logging.info("SIP found in title. Adding Pee")
                     content.append(
