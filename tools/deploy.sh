@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Debug
+cat .boto
+
 # setup boto
 mv .boto /home/circleci/.boto
 

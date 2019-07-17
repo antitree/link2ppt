@@ -143,6 +143,7 @@ jobs:
           command: |
             cd ~/repo/tools
             echo $GCS | base64 -d > 2600.json 
+            export ENDPOINT="gs://containers.antitree.com"
             ./deploy.sh
 
   deploy:
@@ -207,3 +208,6 @@ workflows:
           filters:
             branches:
               only: master
+      - deploy_containers:
+          requires:
+            - production_containers
