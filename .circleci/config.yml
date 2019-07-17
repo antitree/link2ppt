@@ -112,7 +112,7 @@ jobs:
       - persist_to_workspace: 
           root: /home/circleci
           paths:
-            - repo/build/Docker.md
+            - repo
 
   deploy_containers:
     docker:
