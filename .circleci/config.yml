@@ -114,6 +114,37 @@ jobs:
           paths:
             - repo/build/Docker.md
 
+  deploy_containers:
+    docker:
+      - image: circleci/python:2
+    #working_directory: ~/
+
+    steps:
+      #- checkout
+
+      # Download and cache dependencies
+      # - restore_cache:
+      #     keys:
+      #     - v1-dependencies-{{ checksum "Pipfile" }}
+      #     # fallback to using the latest cache if no exact match is found
+      #     - v1-dependencies-
+      - attach_workspace:
+          at: /home/circleci
+
+      - run: echo 'export PATH="$PATH:/home/circleci/.local/bin"' >> $BASH_ENV
+      - run: cd ~/repo
+      - run:
+          name: fucking gsutil install
+          command: |
+            pip install gsutil --user
+
+      - run:
+          name: run deploy script
+          command: |
+            cd ~/repo/tools
+            echo $GCS | base64 -d > 2600.json 
+            ./deploy.sh
+
   deploy:
     docker:
       - image: circleci/python:2
@@ -156,6 +187,8 @@ workflows:
           requires:
             #- build
             - production  # test
+      - deploy_containers:
+          requires:
             - production_containers
   nightly:
     triggers:

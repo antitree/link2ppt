@@ -7,6 +7,7 @@ mv .boto /home/circleci/.boto
 #cat 2600.json
 
 #gsutil ls
-ENDPOINT="gs://links.rochester2600.com"
+if [ "$ENDPOINT" = ""]; then
+	ENDPOINT="gs://links.rochester2600.com"
 echo "Uploading to $ENDPOINT"
 gsutil cp -rp ../build/* $ENDPOINT
