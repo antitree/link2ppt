@@ -10,7 +10,7 @@ mv .boto /home/circleci/.boto
 #cat 2600.json
 
 #gsutil ls
-if [ "$ENDPOINT" = ""]; then
+if [ "$ENDPOINT" = "" ]; then
 	ENDPOINT="gs://links.rochester2600.com"
 fi
 echo "Uploading to $ENDPOINT"
