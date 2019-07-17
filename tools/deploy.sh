@@ -12,5 +12,6 @@ mv .boto /home/circleci/.boto
 #gsutil ls
 if [ "$ENDPOINT" = ""]; then
 	ENDPOINT="gs://links.rochester2600.com"
+fi
 echo "Uploading to $ENDPOINT"
 gsutil cp -rp ../build/* $ENDPOINT
