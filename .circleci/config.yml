@@ -183,14 +183,14 @@ workflows:
     jobs:
       #- build
       - production
-      - production_containers
+      #- production_containers
       - deploy:
           requires:
             #- build
             - production  # test
-      - deploy_containers:
-          requires:
-            - production_containers
+      #- deploy_containers:
+      #    requires:
+      #      - production_containers
   nightly:
     triggers:
       - schedule:
@@ -200,14 +200,14 @@ workflows:
               only: master
     jobs:
       - production
-      - production_containers
+      #- production_containers
       - deploy:
           requires:
             - production
-            - production_containers
+            #- production_containers
           filters:
             branches:
               only: master
-      - deploy_containers:
-          requires:
-            - production_containers
+      #- deploy_containers:
+      #    requires:
+      #      - production_containers
