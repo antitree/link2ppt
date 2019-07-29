@@ -220,8 +220,8 @@ def get_feedly(auth, tag="2600", full=False):
         c = categorizer.Categorize()
         logging.info("Google categorizer enabled")
         try_categorize = True
-      except:
-        logging.error("Google Creds were not found")
+      except Exception as e:
+        logging.error("Google API error: %s" % (e))
         try_categorize = False
     
 
