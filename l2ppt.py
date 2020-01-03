@@ -236,7 +236,9 @@ def get_feedly(auth, tag="2600", full=False):
             logging.error(line.keys())
             logging.error("-"*20)
             logging.error(line)
-            raise KeyError("Content nor fullcontent is in the json")
+            htmltext = '''<p>No content found</p>'''
+            logging.error("Content nor fullcontent is in the json")
+            #raise KeyError("Content nor fullcontent is in the json")
             break
         text = BeautifulSoup(htmltext, "lxml").get_text()
 
