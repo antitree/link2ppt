@@ -239,7 +239,7 @@ def get_feedly(auth, tag="2600", full=False):
             htmltext = '''<p>No content found</p>'''
             logging.error("Content nor fullcontent is in the json")
             #raise KeyError("Content nor fullcontent is in the json")
-            break
+            #break
         text = BeautifulSoup(htmltext, "lxml").get_text()
 
         if try_categorize:
